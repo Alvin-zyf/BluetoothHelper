@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import alvin.zhiyihealth.com.lib_bluetooth.Stream.ConnectBluetoothInput;
-import alvin.zhiyihealth.com.lib_bluetooth.Stream.ConnectBluetoothOutputMQ;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectBluetoothInput;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectBluetoothOutputMQ;
 
 /**
  * Created by zouyifeng on 07/12/2017.

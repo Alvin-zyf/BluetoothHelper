@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth.Stream;
+package alvin.zhiyihealth.com.lib_bluetooth.connect;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothServerSocket;
