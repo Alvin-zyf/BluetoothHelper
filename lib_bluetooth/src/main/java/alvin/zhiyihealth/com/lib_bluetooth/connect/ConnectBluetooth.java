@@ -2,27 +2,29 @@ package alvin.zhiyihealth.com.lib_bluetooth.connect;
 
 import android.bluetooth.BluetoothAdapter;
 
-import alvin.zhiyihealth.com.lib_bluetooth.DeviceBaseHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
 
 /**
  * Created by zouyifeng on 14/12/2017.
  * 20:47
+ *
+ * 蓝牙链接抽象类,用于执行链接需要的准备工作，最终获取socket
  */
 
 public abstract class ConnectBluetooth implements Runnable {
 
-    DeviceBaseHelper mDevice;
+    BaseDeviceHelper mDevice;
 
     BluetoothAdapter mAdapter;
 
     boolean isConnect = false;
 
-    public ConnectBluetooth(DeviceBaseHelper mDevice, BluetoothAdapter mAdapter) {
+    public ConnectBluetooth(BaseDeviceHelper mDevice, BluetoothAdapter mAdapter) {
         this.mDevice = mDevice;
         this.mAdapter = mAdapter;
 
-        if (!DeviceBaseHelper.isConnectType(mDevice.getConnectType()))
-            throw new RuntimeException("DeviceBaseHelper's ConnectType isn't CONNECT_TYPE_CLIENT_INPUT or CONNECT_TYPE_SERVER");
+        if (!ConnectTypeUtil.isConnectType(mDevice.getConnectType()))
+            throw new RuntimeException("BaseDeviceHelper's ConnectTypeUtil isn't CLIENT_INPUT or CONNECT_TYPE_SERVER");
     }
 
     public Thread getCurrentRunThread() {

@@ -16,6 +16,8 @@ import java.util.concurrent.Executors;
 
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectBluetoothInput;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectBluetoothOutputMQ;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectTypeUtil;
 
 /**
  * Created by zouyifeng on 07/12/2017.
@@ -31,7 +33,7 @@ public final class BluetoothHelper {
 
     private BluetoothAdapter mBlueAdapter;
 
-    private DeviceBaseHelper mDeviceBaseHelper;
+    private BaseDeviceHelper mBaseDeviceHelper;
 
     private ArrayList<BluetoothDevice> mDeviceList;
 
@@ -241,17 +243,17 @@ public final class BluetoothHelper {
      * @param mDeviceHelper 设备帮助者
      * @return 连接蓝牙设备流程正常 返回true，出现问题返回false
      */
-    public boolean connectDevice(DeviceBaseHelper mDeviceHelper) {
+    public boolean connectDevice(BaseDeviceHelper mDeviceHelper) {
         if (isRelease) return false;
 
-        if (!mBlueAdapter.isEnabled() || !mDeviceHelper.isClient()) return false;
+        if (!mBlueAdapter.isEnabled() || !ConnectTypeUtil.isClient(mDeviceHelper.getConnectType())) return false;
 
         /*
          * 首先检查当前是否线程正在连接蓝牙设备，如果有的情况下关闭当前连接设备。
          * 如果连接设备与传入设备相同，则直接跳出连接方法
          */
 
-        if (mConnectInput != null && mDeviceHelper.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_INPUT)) {
+        if (mConnectInput != null && ConnectTypeUtil.isCurrentType(mDeviceHelper.getConnectType(), ConnectType.CLIENT_INPUT)) {
             //当连接设备没有改变时，不做任何改变
             if (mDeviceHelper.getDevice().equals(mConnectInput.getDeviceHelper().getDevice()) &&
                     mConnectInput.isConnect()) {
@@ -265,7 +267,7 @@ public final class BluetoothHelper {
             }
         }
 
-        if (mConnectOutput != null && mDeviceHelper.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_OUTPUT)) {
+        if (mConnectOutput != null && ConnectTypeUtil.isCurrentType(mDeviceHelper.getConnectType(), ConnectType.CLIENT_OUTPUT)) {
             if (mDeviceHelper.getDevice().equals(mConnectOutput.getDeviceHelper().getDevice()) &&
                     mConnectOutput.isConnect()) {
                 Utils.logI("Current device already connect,new device is same with old device");
@@ -274,7 +276,7 @@ public final class BluetoothHelper {
         }
 
         //进行配对
-        mDeviceBaseHelper = mDeviceHelper;
+        mBaseDeviceHelper = mDeviceHelper;
 
         startStreamThread(mDeviceHelper);
 
@@ -286,15 +288,15 @@ public final class BluetoothHelper {
      * 根据当前设备的连接类型创建新的数据读写线程。
      * 然后使用线程池执行线程任务
      */
-    private void startStreamThread(DeviceBaseHelper mDeviceHelper) {
+    private void startStreamThread(BaseDeviceHelper mDeviceHelper) {
 
-        if (mDeviceHelper.isInputType()) {
+        if (ConnectTypeUtil.isInputType(mDeviceHelper.getConnectType())) {
             mConnectInput = new ConnectBluetoothInput(mDeviceHelper, mBlueAdapter);
             mConnectInput.setConnect(true);
             mThreadPool.execute(mConnectInput);
         }
 
-        if (mDeviceHelper.isOutputType()) {
+        if (ConnectTypeUtil.isOutputType(mDeviceHelper.getConnectType())) {
             if (mConnectOutput == null) {
                 mConnectOutput = new ConnectBluetoothOutputMQ(mDeviceHelper, mBlueAdapter);
                 mThreadPool.execute(mConnectOutput);
@@ -315,18 +317,18 @@ public final class BluetoothHelper {
      * @param mDeviceHelper 当前对象的主要作用是连接蓝牙设备与数据处理
      * @return 开启成功返回true
      */
-    public boolean startBluetoothServer(DeviceBaseHelper mDeviceHelper) {
+    public boolean startBluetoothServer(BaseDeviceHelper mDeviceHelper) {
         if (isRelease) return false;
 
-        if (!mBlueAdapter.isEnabled() || !mDeviceHelper.isServer()) return false;
+        if (!mBlueAdapter.isEnabled() || !ConnectTypeUtil.isServer(mDeviceHelper.getConnectType())) return false;
 
-        if (mDeviceBaseHelper != null && mDeviceBaseHelper.isInputType())
+        if (mBaseDeviceHelper != null && ConnectTypeUtil.isInputType(mBaseDeviceHelper.getConnectType()))
             closeCurrentRunningInput();
 
-        if (mDeviceBaseHelper != null && mDeviceBaseHelper.isOutputType())
+        if (mBaseDeviceHelper != null && ConnectTypeUtil.isOutputType(mBaseDeviceHelper.getConnectType()))
             closeCurrentRunningOutput();
 
-        mDeviceBaseHelper = mDeviceHelper;
+        mBaseDeviceHelper = mDeviceHelper;
 
         startStreamThread(mDeviceHelper);
 
@@ -341,8 +343,8 @@ public final class BluetoothHelper {
     public void submitBigData(File data) {
         if (isRelease) return;
 
-        if (mDeviceBaseHelper != null) {
-            mDeviceBaseHelper.setBigData(data);
+        if (mBaseDeviceHelper != null) {
+            mBaseDeviceHelper.setBigData(data);
             mConnectOutput.submitData(false);
         }
     }
@@ -355,8 +357,8 @@ public final class BluetoothHelper {
     public void submitSmallData(byte[] data) {
         if (isRelease) return;
 
-        if (mDeviceBaseHelper != null) {
-            mDeviceBaseHelper.setSmallData(data);
+        if (mBaseDeviceHelper != null) {
+            mBaseDeviceHelper.setSmallData(data);
             mConnectOutput.submitData(true);
         }
     }
@@ -400,8 +402,8 @@ public final class BluetoothHelper {
         mConnectOutput = null;
     }
 
-    public DeviceBaseHelper getDeviceHelper() {
-        return mDeviceBaseHelper;
+    public BaseDeviceHelper getDeviceHelper() {
+        return mBaseDeviceHelper;
     }
 
     public BluetoothAdapter getmBlueAdapter() {
@@ -430,7 +432,7 @@ public final class BluetoothHelper {
         listeners = null;
         mContext = null;
         mBlueToothListener = null;
-        mDeviceBaseHelper = null;
+        mBaseDeviceHelper = null;
         mBlueAdapter = null;
     }
 

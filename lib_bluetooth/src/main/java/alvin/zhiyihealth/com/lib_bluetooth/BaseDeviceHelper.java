@@ -9,15 +9,19 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import alvin.zhiyihealth.com.lib_bluetooth.connect.*;
 /**
  * Created by zouyifeng on 08/12/2017.
  * 09:40
+ *
+ * 封装蓝牙设备对象帮助类 {@link BluetoothDevice}
  */
 
-public abstract class DeviceBaseHelper {
+public abstract class BaseDeviceHelper {
 
 
     private UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
 
     private BluetoothDevice device;
 
@@ -27,8 +31,13 @@ public abstract class DeviceBaseHelper {
 
     private String serverName = "";
 
-
-    public DeviceBaseHelper(BluetoothDevice device, int mConnectType) {
+    /**
+     * 创建蓝牙设备帮助对象的构造方法
+     *
+     * @param device 需要链接的蓝牙设备
+     * @param mConnectType 链接类型 详情见{@link ConnectType}
+     */
+    public BaseDeviceHelper(BluetoothDevice device, int mConnectType) {
         this.device = device;
         this.mConnectType = mConnectType;
 
@@ -46,107 +55,10 @@ public abstract class DeviceBaseHelper {
 
     /**
      * 用于标示当前设备的蓝牙连接状态
-     * 蓝牙状态有: {@link #CONNECT_TYPE_CLIENT_INPUT} or {@link #CONNECT_TYPE_SERVER_INPUT}
+     * 蓝牙状态有: {@link ConnectType}
      */
     private int mConnectType;
 
-    /**
-     * 以客户端的形式连接蓝牙服务器
-     * <p>读取数据</>
-     * {@link #mConnectType}
-     */
-    public static final int CONNECT_TYPE_CLIENT_INPUT = 0x0000000F;
-
-    /**
-     * 以客户端的形式连接蓝牙服务器
-     * <p>提交数据</>
-     */
-    public static final int CONNECT_TYPE_CLIENT_OUTPUT = 0x00000F00;
-
-    /**
-     * 包含两者 {@link #CONNECT_TYPE_CLIENT_INPUT}  {@link #CONNECT_TYPE_CLIENT_OUTPUT}
-     */
-    public static final int CONNECT_TYPE_CLIENT_INPUT_OUTPUT = CONNECT_TYPE_CLIENT_INPUT | CONNECT_TYPE_CLIENT_OUTPUT;
-
-    /**
-     * 以服务端的形式等待蓝牙客户端连接
-     * <p>读取数据</>
-     * {@link #mConnectType}
-     */
-    public static final int CONNECT_TYPE_SERVER_INPUT = 0x000000F0;
-
-    /**
-     * 以服务端的形式等待蓝牙客户端连接
-     * <p>提交数据</>
-     * {@link #mConnectType}
-     */
-    public static final int CONNECT_TYPE_SERVER_OUTPUT = 0x000F000;
-
-    /**
-     * 包含两者 {@link #CONNECT_TYPE_SERVER_INPUT}  {@link #CONNECT_TYPE_SERVER_OUTPUT}
-     */
-    public static final int CONNECT_TYPE_SERVER_INPUT_OUTPUT = CONNECT_TYPE_SERVER_INPUT | CONNECT_TYPE_SERVER_OUTPUT;
-
-    /**
-     * 判断是否属于当前 连接类型
-     *
-     * @param mConnectType 连接类型
-     * @return 如果是返回 true，否则 false
-     */
-    public static boolean isConnectType(int mConnectType) {
-        return CONNECT_TYPE_CLIENT_INPUT == mConnectType ||
-                CONNECT_TYPE_SERVER_INPUT == mConnectType ||
-                CONNECT_TYPE_CLIENT_OUTPUT == mConnectType ||
-                CONNECT_TYPE_SERVER_OUTPUT == mConnectType ||
-                CONNECT_TYPE_CLIENT_INPUT_OUTPUT == mConnectType ||
-                CONNECT_TYPE_SERVER_INPUT_OUTPUT == mConnectType;
-    }
-
-    /**
-     * 传入参数currentType 是否与当前设备的ConnectType匹配
-     *
-     * @param currentType 当前想要判断的type
-     * @return 匹配返回true
-     */
-    public boolean isCurrentType(int currentType) {
-        return (currentType & mConnectType) == currentType;
-    }
-
-    /**
-     * 当前设备是否需要读取数据
-     *
-     * @return 是为true
-     */
-    public boolean isInputType() {
-        return ((CONNECT_TYPE_CLIENT_INPUT | CONNECT_TYPE_SERVER_INPUT) & mConnectType) != 0;
-    }
-
-    /**
-     * 当前设备是否需要提交数据
-     *
-     * @return 是为true
-     */
-    public boolean isOutputType() {
-        return ((CONNECT_TYPE_CLIENT_OUTPUT | CONNECT_TYPE_SERVER_OUTPUT) & mConnectType) != 0;
-    }
-
-    /**
-     * 当前设备是客户端吗
-     *
-     * @return 是为true
-     */
-    public boolean isClient() {
-        return (CONNECT_TYPE_CLIENT_INPUT_OUTPUT & mConnectType) != 0;
-    }
-
-    /**
-     * 当前设备是服务端吗
-     *
-     * @return 是为true
-     */
-    public boolean isServer() {
-        return (CONNECT_TYPE_SERVER_INPUT_OUTPUT & mConnectType) != 0;
-    }
 
     /**
      * 以客户端的身份连接蓝牙设备
@@ -211,9 +123,9 @@ public abstract class DeviceBaseHelper {
      */
     public synchronized void closeAllSocket() {
         try {
-            if (isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_INPUT)) {
+            if (ConnectTypeUtil.isCurrentType(mConnectType,ConnectType.CLIENT_INPUT)) {
                 closeSocket();
-            } else if (isCurrentType(DeviceBaseHelper.CONNECT_TYPE_SERVER_INPUT)) {
+            } else if (ConnectTypeUtil.isCurrentType(mConnectType,ConnectType.SERVER_INPUT)) {
                 closeServerSocket();
             }
         } catch (Exception e) {
@@ -226,7 +138,7 @@ public abstract class DeviceBaseHelper {
     /**
      * 用于返回蓝牙连接状态类型
      *
-     * @return 蓝牙状态有: {@link #CONNECT_TYPE_CLIENT_INPUT} or {@link #CONNECT_TYPE_SERVER_INPUT}
+     * @return 蓝牙状态有: {@link ConnectType}
      */
     public int getConnectType() {
         return mConnectType;

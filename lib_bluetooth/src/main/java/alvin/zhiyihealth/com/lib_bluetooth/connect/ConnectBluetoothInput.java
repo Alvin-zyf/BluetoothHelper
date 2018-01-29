@@ -10,7 +10,7 @@ import android.os.Message;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
-import alvin.zhiyihealth.com.lib_bluetooth.DeviceBaseHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
 import alvin.zhiyihealth.com.lib_bluetooth.Utils;
 
 /**
@@ -28,14 +28,12 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
         }
     };
 
-
-
     /**
      * 作为服务端使用的套接字
      */
     private BluetoothServerSocket mServerSocket;
 
-    public ConnectBluetoothInput(DeviceBaseHelper mDevice, BluetoothAdapter mAdapter) {
+    public ConnectBluetoothInput(BaseDeviceHelper mDevice, BluetoothAdapter mAdapter) {
         super(mDevice, mAdapter);
     }
 
@@ -44,12 +42,12 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
      */
     private void cancelConnect() {
         try {
-            if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_INPUT)) {
+            if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.CLIENT_INPUT)) {
                 if (mDevice.getSocket() != null) {
                     mDevice.getSocket().close();
                     mDevice.setSocket(null);
                 }
-            } else if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_SERVER_INPUT)) {
+            } else if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.SERVER_INPUT)) {
                 if (mDevice.getServerSocket() != null) {
                     mDevice.getServerSocket().close();
                     mDevice.setServerSocket(null);
@@ -65,9 +63,9 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
     public void run() {
         if (!isConnect) return;
 
-        if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_INPUT)) {
+        if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.CLIENT_INPUT)) {
             startLinkServer();
-        } else if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_SERVER_INPUT)) {
+        } else if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.SERVER_INPUT)) {
             createServer();
         }
 
@@ -83,7 +81,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
             BluetoothSocket mSocket = null;
 
             try {
-                if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_SERVER_INPUT)) {
+                if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.SERVER_INPUT)) {
                     mSocket = mDevice.actServerConnectDevice(mAdapter);
                 }
 
@@ -112,7 +110,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
         BufferedInputStream bufferedInputStream = null;
         BluetoothSocket mSocket = null;
         try {
-            if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_INPUT)) {
+            if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.CLIENT_INPUT)) {
                 mSocket = mDevice.actClientConnectDevice();
             }
 
@@ -164,7 +162,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
 
 
 
-    public DeviceBaseHelper getDeviceHelper() {
+    public BaseDeviceHelper getDeviceHelper() {
         return mDevice;
     }
 }

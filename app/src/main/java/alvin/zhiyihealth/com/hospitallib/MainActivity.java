@@ -21,9 +21,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
 import alvin.zhiyihealth.com.lib_bluetooth.BluetoothHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.DeviceBaseHelper;
 import alvin.zhiyihealth.com.lib_bluetooth.Utils;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
 import alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothHelperService;
 
 public class MainActivity extends AppCompatActivity {
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.startServer).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DeviceBaseHelper deviceBaseHelper = new DeviceBaseHelper(null, DeviceBaseHelper.CONNECT_TYPE_SERVER_INPUT_OUTPUT) {
+                BaseDeviceHelper baseDeviceHelper = new BaseDeviceHelper(null, ConnectType.SERVER_INPUT_OUTPUT) {
                     @Override
                     public void processData(byte[] data, int len) {
                         try {
@@ -87,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                 };
 
                 bluetoothHelper.isFoundMind(MainActivity.this);
-                bluetoothHelper.startBluetoothServer(deviceBaseHelper);
+                bluetoothHelper.startBluetoothServer(baseDeviceHelper);
             }
         });
 
@@ -153,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
             int position = (int) v.getTag();
             BluetoothDevice bluetoothDevice = data.get(position);
 
-            DeviceBaseHelper deviceBaseHelper = new DeviceBaseHelper(bluetoothDevice, DeviceBaseHelper.CONNECT_TYPE_CLIENT_INPUT_OUTPUT) {
+            BaseDeviceHelper baseDeviceHelper = new BaseDeviceHelper(bluetoothDevice,  ConnectType.CLIENT_INPUT_OUTPUT) {
                 @Override
                 public void processData(byte[] data, int len) {
                     try {
@@ -164,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
-            bluetoothHelper.connectDevice(deviceBaseHelper);
+            bluetoothHelper.connectDevice(baseDeviceHelper);
         }
     }
 

@@ -11,7 +11,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 
-import alvin.zhiyihealth.com.lib_bluetooth.DeviceBaseHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
 import alvin.zhiyihealth.com.lib_bluetooth.Utils;
 
 /**
@@ -45,7 +45,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
      */
     static final int CHANGE_DEVICE = 0x00000FFF;
 
-    public ConnectBluetoothOutputMQ(DeviceBaseHelper mDevice, BluetoothAdapter mAdapter) {
+    public ConnectBluetoothOutputMQ(BaseDeviceHelper mDevice, BluetoothAdapter mAdapter) {
         super(mDevice, mAdapter);
     }
 
@@ -88,7 +88,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
      *
      * @param mDevice
      */
-    public void setDeviceHelper(DeviceBaseHelper mDevice) {
+    public void setDeviceHelper(BaseDeviceHelper mDevice) {
         if (!this.mDevice.getDevice().getAddress().equals(mDevice.getDevice().getAddress())) {
             Message obtain = Message.obtain(handler);
             obtain.what = CHANGE_DEVICE;
@@ -98,7 +98,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
         }
     }
 
-    public DeviceBaseHelper getDeviceHelper(){
+    public BaseDeviceHelper getDeviceHelper(){
         return mDevice;
     }
 
@@ -132,19 +132,19 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
 
             switch (msg.what) {
                 case S_EXECUTE_MSG_TYPE_OUTPUT:
-                    submitSmallData((DeviceBaseHelper) msg.obj);
+                    submitSmallData((BaseDeviceHelper) msg.obj);
                     break;
 
                 case B_EXECUTE_MSG_TYPE_OUTPUT:
-                    submitBigData((DeviceBaseHelper) msg.obj);
+                    submitBigData((BaseDeviceHelper) msg.obj);
                     break;
 
                 case STOP_MSG_TYPE_OUTPUT:
-                    closeMQ((DeviceBaseHelper) msg.obj);
+                    closeMQ((BaseDeviceHelper) msg.obj);
                     break;
 
                 case CHANGE_DEVICE:
-                    ((DeviceBaseHelper) msg.obj).closeAllSocket();
+                    ((BaseDeviceHelper) msg.obj).closeAllSocket();
                     break;
             }
         }
@@ -154,14 +154,14 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
          *
          * @param mDevice 蓝牙设备帮助类
          */
-        private void submitBigData(DeviceBaseHelper mDevice) {
+        private void submitBigData(BaseDeviceHelper mDevice) {
             BufferedInputStream bufferedInputStream = null;
             BufferedOutputStream bufferedOutputStream;
             BluetoothSocket mSocket;
             try {
-                if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_OUTPUT)) {
+                if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.CLIENT_OUTPUT)) {
                     mSocket = mDevice.actClientConnectDevice();
-                } else if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_SERVER_OUTPUT)) {
+                } else if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.SERVER_OUTPUT)) {
                     mSocket = mDevice.actServerConnectDevice(mAdapter);
                 } else return;
 
@@ -207,13 +207,13 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
          *
          * @param mDevice 蓝牙设备帮助类
          */
-        private void submitSmallData(DeviceBaseHelper mDevice) {
+        private void submitSmallData(BaseDeviceHelper mDevice) {
             BufferedOutputStream bufferedOutputStream;
             BluetoothSocket mSocket;
             try {
-                if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_CLIENT_OUTPUT)) {
+                if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.CLIENT_OUTPUT)) {
                     mSocket = mDevice.actClientConnectDevice();
-                } else if (mDevice.isCurrentType(DeviceBaseHelper.CONNECT_TYPE_SERVER_OUTPUT)) {
+                } else if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.SERVER_OUTPUT)) {
                     mSocket = mDevice.actServerConnectDevice(mAdapter);
                 } else return;
 
@@ -248,7 +248,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
          *
          * @param mDevice
          */
-        private void closeMQ(DeviceBaseHelper mDevice) {
+        private void closeMQ(BaseDeviceHelper mDevice) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                 getLooper().quitSafely();
             } else {
