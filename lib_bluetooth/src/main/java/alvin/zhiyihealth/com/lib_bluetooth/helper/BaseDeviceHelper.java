@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth;
+package alvin.zhiyihealth.com.lib_bluetooth.helper;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
 
+import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.*;
 /**
  * Created by zouyifeng on 08/12/2017.
@@ -78,15 +80,15 @@ public abstract class BaseDeviceHelper {
     /**
      * 以服务端的身份连接蓝牙设备
      * 此方法会阻塞至有蓝牙设备连接
-     *
+     * 
      * @return 返回与客户端连接成功的套接字
      * @throws IOException 连接失败会抛出异常
      */
     public synchronized BluetoothSocket actServerConnectDevice(BluetoothAdapter mAdapter) throws IOException {
-        Utils.logI("server address is " + mAdapter.getAddress());
+        LogUtil.logI("server address is " + mAdapter.getAddress());
         if (mServerSocket == null || mSocket == null) {
             mServerSocket = mAdapter.listenUsingRfcommWithServiceRecord(serverName, uuid);
-            Utils.logI("wait for the client bluetooth");
+            LogUtil.logI("wait for the client bluetooth");
             mSocket = mServerSocket.accept();
         }
 
@@ -111,7 +113,7 @@ public abstract class BaseDeviceHelper {
      *
      * @throws IOException
      */
-    public void closeSocket() throws IOException {
+    public void closeClientSocket() throws IOException {
         if (mSocket != null) {
             mSocket.close();
             mSocket = null;
@@ -121,16 +123,16 @@ public abstract class BaseDeviceHelper {
     /**
      * 根据当前的设备连接类型进行套接字的关闭
      */
-    public synchronized void closeAllSocket() {
+    public synchronized void closeSocket() {
         try {
             if (ConnectTypeUtil.isCurrentType(mConnectType,ConnectType.CLIENT_INPUT)) {
-                closeSocket();
+                closeClientSocket();
             } else if (ConnectTypeUtil.isCurrentType(mConnectType,ConnectType.SERVER_INPUT)) {
                 closeServerSocket();
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Utils.logE("The bluetooth connect close is failed");
+            LogUtil.logE("The bluetooth connect close is failed");
         }
     }
 

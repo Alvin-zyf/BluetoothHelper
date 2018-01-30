@@ -2,7 +2,8 @@ package alvin.zhiyihealth.com.lib_bluetooth.connect;
 
 import android.bluetooth.BluetoothAdapter;
 
-import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
 
 /**
  * Created by zouyifeng on 14/12/2017.

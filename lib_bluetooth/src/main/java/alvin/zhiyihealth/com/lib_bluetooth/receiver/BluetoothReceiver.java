@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth;
+package alvin.zhiyihealth.com.lib_bluetooth.receiver;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothClass;
@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 /**
  * Created by zouyifeng on 07/12/2017.
@@ -19,7 +21,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        Utils.logI(action);
+        LogUtil.logI(action);
 
         if (onBlueToothStateListener == null) return;
 
@@ -42,7 +44,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
      */
     private void deviceDisconnect(Intent intent) {
         BluetoothDevice cancelDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-        Utils.logI("connect state is " + cancelDevice);
+        LogUtil.logI("connect state is " + cancelDevice);
 
         if (onBlueToothStateListener != null) {
             onBlueToothStateListener.deviceDisconnect(cancelDevice);
@@ -59,7 +61,7 @@ public class BluetoothReceiver extends BroadcastReceiver {
         BluetoothDevice scanDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
         BluetoothClass bluetoothClass = intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS);
 //
-//        Utils.logI("name is " + scanDevice.getName() + ", type is " + Integer.toHexString(bluetoothClass.getMajorDeviceClass())
+//        LogUtil.logI("name is " + scanDevice.getName() + ", type is " + Integer.toHexString(bluetoothClass.getMajorDeviceClass())
 //                + "class is " + bluetoothClass.getDeviceClass()
 //        );
 

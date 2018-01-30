@@ -11,8 +11,9 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
 
-import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.Utils;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
 
 /**
  * Created by zouyifeng on 12/12/2017.
@@ -144,7 +145,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
                     break;
 
                 case CHANGE_DEVICE:
-                    ((BaseDeviceHelper) msg.obj).closeAllSocket();
+                    ((BaseDeviceHelper) msg.obj).closeSocket();
                     break;
             }
         }
@@ -166,11 +167,11 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
                 } else return;
 
                 if (mSocket == null) {
-                    Utils.logI("socket is null");
+                    LogUtil.logI("socket is null");
                     return;
                 }
 
-                Utils.logI("already link");
+                LogUtil.logI("already link");
 
                 isConnect = true;
 
@@ -183,7 +184,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
                 int len;
                 //获取数据处理数据
                 while ((len = bufferedInputStream.read(data)) != -1) {
-                    Utils.logI("write again");
+                    LogUtil.logI("write again");
                     bufferedOutputStream.write(data, 0, len);
                 }
 
@@ -191,7 +192,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
             } catch (Exception e) {
                 isConnect = false;
                 e.printStackTrace();
-                Utils.logE("client : connect has error");
+                LogUtil.logE("client : connect has error");
             } finally {
                 try {
                     if (bufferedInputStream != null)
@@ -218,27 +219,27 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
                 } else return;
 
                 if (mSocket == null) {
-                    Utils.logI("socket is null");
+                    LogUtil.logI("socket is null");
                     return;
                 }
 
                 isConnect = true;
 
-                Utils.logI("already link");
+                LogUtil.logI("already link");
 
                 //接入输入流
                 bufferedOutputStream = new BufferedOutputStream(mSocket.getOutputStream());
 
                 //获取数据处理数据
-                Utils.logI("write again");
+                LogUtil.logI("write again");
                 bufferedOutputStream.write(mDevice.smallData(), 0, mDevice.smallData().length);
                 bufferedOutputStream.flush();
 
             } catch (Exception e) {
                 isConnect = false;
                 e.printStackTrace();
-                Utils.logE("client : connect has error");
-                mDevice.closeAllSocket();
+                LogUtil.logE("client : connect has error");
+                mDevice.closeSocket();
             }
         }
 
@@ -257,7 +258,7 @@ public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
 
             removeCallbacksAndMessages(null);
 
-            mDevice.closeAllSocket();
+            mDevice.closeSocket();
         }
 
     }

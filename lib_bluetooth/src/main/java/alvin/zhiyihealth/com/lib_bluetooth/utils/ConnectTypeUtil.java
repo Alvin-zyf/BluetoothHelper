@@ -1,4 +1,6 @@
-package alvin.zhiyihealth.com.lib_bluetooth.connect;
+package alvin.zhiyihealth.com.lib_bluetooth.utils;
+
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
 
 /**
  * Created by zouyifeng on 29/01/2018.
@@ -8,6 +10,8 @@ package alvin.zhiyihealth.com.lib_bluetooth.connect;
  */
 
 public final class ConnectTypeUtil{
+
+    private ConnectTypeUtil(){}
 
     /**
      * 判断是否属于当前 连接类型

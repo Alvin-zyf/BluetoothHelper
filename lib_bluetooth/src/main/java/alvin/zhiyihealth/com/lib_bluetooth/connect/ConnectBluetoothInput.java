@@ -10,8 +10,9 @@ import android.os.Message;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 
-import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.Utils;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
 
 /**
  * Created by zouyifeng on 08/12/2017.
@@ -40,7 +41,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
     /**
      * 取消连接操作
      */
-    private void cancelConnect() {
+    private void disConnect() {
         try {
             if (ConnectTypeUtil.isCurrentType(mDevice.getConnectType(),ConnectType.CLIENT_INPUT)) {
                 if (mDevice.getSocket() != null) {
@@ -55,7 +56,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Utils.logE("The bluetooth connect close is failed");
+            LogUtil.logE("The bluetooth connect close is failed");
         }
     }
 
@@ -86,19 +87,19 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
                 }
 
                 if (mSocket == null) {
-                    Utils.logI("socket is null");
+                    LogUtil.logI("socket is null");
                     return;
                 }
-                Utils.logI("already link");
+                LogUtil.logI("already link");
 
                 bufferedInputStream = new BufferedInputStream(mSocket.getInputStream());
                 readData(bufferedInputStream);
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Utils.logE("server : has error");
+                LogUtil.logE("server : has error");
             } finally {
-                mDevice.closeAllSocket();
+                mDevice.closeSocket();
             }
         }
     }
@@ -115,11 +116,11 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
             }
 
             if (mSocket == null) {
-                Utils.logI("socket is null");
+                LogUtil.logI("socket is null");
                 return;
             }
 
-            Utils.logI("already link");
+            LogUtil.logI("already link");
 
             //接入输入流
             bufferedInputStream = new BufferedInputStream(mSocket.getInputStream());
@@ -129,9 +130,9 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
         } catch (Exception e) {
             e.printStackTrace();
             isConnect = false;
-            Utils.logE("client : connect has error");
+            LogUtil.logE("client : connect has error");
         } finally {
-            mDevice.closeAllSocket();
+            mDevice.closeSocket();
         }
     }
 
@@ -149,7 +150,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
             while (isConnect) {
                 //获取数据处理数据
                 while ((len = bufferedInputStream.read(data)) != -1) {
-                    Utils.logI("read again");
+                    LogUtil.logI("read again");
                     Message obtain = Message.obtain(handler);
                     obtain.arg1 = len;
                     obtain.obj = data;

@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth;
+package alvin.zhiyihealth.com.lib_bluetooth.utils;
 
 import android.util.Log;
 
@@ -7,13 +7,15 @@ import android.util.Log;
  * 10:54
  */
 
-public class Utils {
+public final class LogUtil {
+    private LogUtil(){}
+
     private static final String TAG = "lib_bluetooth";
 
-    static int LOG_ROOT;
-    static final int LOG_D = 0x0000000F;
-    static final int LOG_I = 0x000000F0;
-    static final int LOG_E = 0x00000F00;
+    public static int LOG_ROOT;
+    public static final int LOG_D = 0x0000000F;
+    public static final int LOG_I = 0x000000F0;
+    public static final int LOG_E = 0x00000F00;
 
     public static void logD(String mag) {
         if ((LOG_ROOT & LOG_D) == LOG_D)

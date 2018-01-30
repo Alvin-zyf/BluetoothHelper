@@ -21,9 +21,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import alvin.zhiyihealth.com.lib_bluetooth.BaseDeviceHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.BluetoothHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.Utils;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.BluetoothHelper;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
 import alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothHelperService;
 
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void processData(byte[] data, int len) {
                         try {
-                            Utils.logI(new String(data, 0, len, "utf-8"));
+                            LogUtil.logI(new String(data, 0, len, "utf-8"));
                         } catch (Exception e) {
 
                         }
@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void processData(byte[] data, int len) {
                     try {
-                        Utils.logI(new String(data, 0, len, "utf-8"));
+                        LogUtil.logI(new String(data, 0, len, "utf-8"));
                     } catch (Exception e) {
 
                     }
@@ -215,11 +215,11 @@ public class MainActivity extends AppCompatActivity {
             case REQUEST_PERMISSION_BT:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //TODO 请求权限成功
-                    Utils.logI("request permission success");
+                    LogUtil.logI("request permission success");
                 } else {
                     //TODO 提示权限已经被禁用
 
-                    Utils.logI("request permission failed");
+                    LogUtil.logI("request permission failed");
 
                 }
                 break;

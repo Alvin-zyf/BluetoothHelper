@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
 
-import alvin.zhiyihealth.com.lib_bluetooth.BluetoothHelper;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.BluetoothHelper;
 
 public class BluetoothHelperService extends Service {
 

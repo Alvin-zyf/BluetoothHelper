@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth;
+package alvin.zhiyihealth.com.lib_bluetooth.helper;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import alvin.zhiyihealth.com.lib_bluetooth.receiver.BluetoothReceiver;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectBluetoothInput;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectBluetoothOutputMQ;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
-import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectTypeUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
 
 /**
  * Created by zouyifeng on 07/12/2017.
@@ -85,7 +87,7 @@ public final class BluetoothHelper {
 
     private BluetoothHelper(Context context, BluetoothAdapter adapter) {
         //配置日志权限
-        Utils.LOG_ROOT = Utils.LOG_D | Utils.LOG_E | Utils.LOG_I;
+        LogUtil.LOG_ROOT = LogUtil.LOG_D | LogUtil.LOG_E | LogUtil.LOG_I;
 
 
         mContext = context;
@@ -135,13 +137,13 @@ public final class BluetoothHelper {
 
             switch (state) {
                 case BluetoothAdapter.STATE_ON:
-                    Utils.logI("bluetooth on");
+                    LogUtil.logI("bluetooth on");
 
                     isOpenBluetooth = true;
                     break;
 
                 case BluetoothAdapter.STATE_OFF:
-                    Utils.logI("bluetooth off");
+                    LogUtil.logI("bluetooth off");
                     closeThread();
 
                     isOpenBluetooth = false;
@@ -257,7 +259,7 @@ public final class BluetoothHelper {
             //当连接设备没有改变时，不做任何改变
             if (mDeviceHelper.getDevice().equals(mConnectInput.getDeviceHelper().getDevice()) &&
                     mConnectInput.isConnect()) {
-                Utils.logI("Current device already connect,new device is same with old device");
+                LogUtil.logI("Current device already connect,new device is same with old device");
                 return true;
             }
 
@@ -270,7 +272,7 @@ public final class BluetoothHelper {
         if (mConnectOutput != null && ConnectTypeUtil.isCurrentType(mDeviceHelper.getConnectType(), ConnectType.CLIENT_OUTPUT)) {
             if (mDeviceHelper.getDevice().equals(mConnectOutput.getDeviceHelper().getDevice()) &&
                     mConnectOutput.isConnect()) {
-                Utils.logI("Current device already connect,new device is same with old device");
+                LogUtil.logI("Current device already connect,new device is same with old device");
                 return true;
             }
         }
@@ -374,12 +376,12 @@ public final class BluetoothHelper {
         try {
             if (mConnectInput != null) {
                 mConnectInput.setConnect(false);
-                mConnectInput.getDeviceHelper().closeAllSocket();
+                mConnectInput.getDeviceHelper().closeSocket();
             }
             isSocketClose = true;
         } catch (Exception e) {
             e.printStackTrace();
-            Utils.logE("Close socket error");
+            LogUtil.logE("Close socket error");
 
             return false;
         } finally {
