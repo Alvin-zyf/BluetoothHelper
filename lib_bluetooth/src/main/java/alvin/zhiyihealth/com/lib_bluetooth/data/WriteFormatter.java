@@ -7,7 +7,7 @@ import java.io.InputStream;
  * 16:45
  */
 
-public interface WriteFormater<D> {
+public interface WriteFormatter<D> {
 
     /**
      * t 为数据源，将数据源转换成流之后返回

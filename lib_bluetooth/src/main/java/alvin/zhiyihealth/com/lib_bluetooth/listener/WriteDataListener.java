@@ -8,4 +8,14 @@ package alvin.zhiyihealth.com.lib_bluetooth.listener;
  */
 
 public interface WriteDataListener {
+
+    /**
+     * 写出成功调用的方法
+     */
+    void success();
+
+    /**
+     * 写出失败调用的方法
+     */
+    void failed();
 }
