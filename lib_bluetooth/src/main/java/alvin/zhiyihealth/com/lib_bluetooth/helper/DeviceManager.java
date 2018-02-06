@@ -3,13 +3,15 @@ package alvin.zhiyihealth.com.lib_bluetooth.helper;
 import android.bluetooth.BluetoothDevice;
 
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
+import alvin.zhiyihealth.com.lib_bluetooth.data.ReadFormatter;
+import alvin.zhiyihealth.com.lib_bluetooth.data.WriteFormatter;
 
 /**
  * Created by zouyifeng on 30/01/2018.
  * 15:47
  */
 
-public interface DeviceImprove {
+public interface DeviceManager {
 
     /**
      * 返回一个蓝牙设备对象
@@ -25,5 +27,15 @@ public interface DeviceImprove {
      */
     int getConnectType();
 
-    
+    /**
+     *
+     * @return 返回一个 读取数据解析对象
+     */
+    ReadFormatter getReadFormatter();
+
+    /**
+     *
+     * @return 返回一个 数据写出转换对象
+     */
+    WriteFormatter getWriteFormatter();
 }

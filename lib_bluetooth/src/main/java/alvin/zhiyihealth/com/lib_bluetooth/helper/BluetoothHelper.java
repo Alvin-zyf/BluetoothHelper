@@ -27,7 +27,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
  * <p>
  * 蓝牙设备接入帮助类
  */
-
+@Deprecated
 public final class BluetoothHelper {
     private static final int BLUETOOTH_REQUEST_CODE = 0x000000FF;
 

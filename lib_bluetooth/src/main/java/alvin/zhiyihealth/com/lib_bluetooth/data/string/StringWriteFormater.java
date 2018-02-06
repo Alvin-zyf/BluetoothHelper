@@ -3,7 +3,7 @@ package alvin.zhiyihealth.com.lib_bluetooth.data.string;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import alvin.zhiyihealth.com.lib_bluetooth.data.WriteFormatterAdapter;
+import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.WriteFormatterAdapter;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 

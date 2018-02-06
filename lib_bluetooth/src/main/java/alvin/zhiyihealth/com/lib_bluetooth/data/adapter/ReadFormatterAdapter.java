@@ -1,5 +1,6 @@
-package alvin.zhiyihealth.com.lib_bluetooth.data;
+package alvin.zhiyihealth.com.lib_bluetooth.data.adapter;
 
+import alvin.zhiyihealth.com.lib_bluetooth.data.ReadFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListen;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
 

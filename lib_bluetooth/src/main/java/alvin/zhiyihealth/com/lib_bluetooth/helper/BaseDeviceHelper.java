@@ -18,7 +18,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.connect.*;
  *
  * 封装蓝牙设备对象帮助类 {@link BluetoothDevice}
  */
-
+@Deprecated
 public abstract class BaseDeviceHelper {
 
 

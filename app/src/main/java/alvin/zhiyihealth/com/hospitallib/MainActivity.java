@@ -21,11 +21,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
 import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
 import alvin.zhiyihealth.com.lib_bluetooth.helper.BluetoothHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
 import alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothHelperService;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.IOException;
 
-import alvin.zhiyihealth.com.lib_bluetooth.data.ReadFormatterAdapter;
+import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.ReadFormatterAdapter;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 

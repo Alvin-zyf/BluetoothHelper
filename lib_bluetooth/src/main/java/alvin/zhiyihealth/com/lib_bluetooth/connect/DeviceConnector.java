@@ -5,7 +5,7 @@ import android.bluetooth.BluetoothSocket;
 import java.io.Closeable;
 import java.io.IOException;
 
-import alvin.zhiyihealth.com.lib_bluetooth.helper.DeviceImprove;
+import alvin.zhiyihealth.com.lib_bluetooth.helper.DeviceManager;
 
 /**
  * Created by zouyifeng on 30/01/2018.
@@ -21,7 +21,7 @@ public interface DeviceConnector extends Closeable{
      *
      * @return 返回一个连接成功的套接字
      */
-    BluetoothSocket connect(DeviceImprove device) throws IOException;
+    BluetoothSocket connect(DeviceManager device) throws IOException;
 
     /**
      * 主要用于 关闭套接字
