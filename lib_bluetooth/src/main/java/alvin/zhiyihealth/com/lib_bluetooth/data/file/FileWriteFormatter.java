@@ -2,7 +2,7 @@ package alvin.zhiyihealth.com.lib_bluetooth.data.file;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.WriteFormatterAdapter;
@@ -15,14 +15,12 @@ import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.WriteFormatterAdapter;
 public class FileWriteFormatter extends WriteFormatterAdapter<File> {
 
     @Override
-    public InputStream writeFormat(File t) {
-        FileInputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(t);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+    public InputStream writeFormat(File t) throws IOException {
+        return new FileInputStream(t);
+    }
 
-        return inputStream;
+    @Override
+    public long sizeOf(File file) {
+        return file.length();
     }
 }

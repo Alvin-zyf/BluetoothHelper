@@ -155,6 +155,7 @@ public class ConnectBluetoothInput extends ConnectBluetooth {
                     obtain.arg1 = len;
                     obtain.obj = data;
                     obtain.sendToTarget();
+                    obtain.sendToTarget();
                 }
             }
         }

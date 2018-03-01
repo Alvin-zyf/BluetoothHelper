@@ -1,5 +1,7 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data;
 
+import java.io.Closeable;
+
 /**
  * Created by zouyifeng on 30/01/2018.
  * 16:25
@@ -7,7 +9,7 @@ package alvin.zhiyihealth.com.lib_bluetooth.data;
  * 数据转化器，写入写出时可通过当前接口拦截并做数据转换
  */
 
-public interface ReadFormatter {
+public interface ReadFormatter extends Closeable {
 
     /**
      *  传入data 和 len 进行数据转换
@@ -21,6 +23,5 @@ public interface ReadFormatter {
      * 清空缓存数据
      */
     void clean();
-
 
 }

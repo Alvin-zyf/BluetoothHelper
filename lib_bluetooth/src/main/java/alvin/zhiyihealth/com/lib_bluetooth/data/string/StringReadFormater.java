@@ -1,7 +1,6 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data.string;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.ReadFormatterAdapter;
@@ -15,7 +14,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
  * 字符串数据转化器
  */
 
-public class StringReadFormater extends ReadFormatterAdapter<String> implements Closeable {
+public class StringReadFormater extends ReadFormatterAdapter<String>  {
 
     /**
      * 编码格式
@@ -49,13 +48,11 @@ public class StringReadFormater extends ReadFormatterAdapter<String> implements 
 
         if (len == -1) {
 
-            if (listener != null) {
-                try {
-                    listener.produceData(byteStream.toString(charsetName));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LogUtil.logE(e.getLocalizedMessage());
-                }
+            try {
+                sendDataToListener(byteStream.toString(charsetName));
+            } catch (Exception e) {
+                e.printStackTrace();
+                LogUtil.logE(e.getLocalizedMessage());
             }
 
             clean();
@@ -67,7 +64,8 @@ public class StringReadFormater extends ReadFormatterAdapter<String> implements 
 
     @Override
     public void clean() {
-        byteStream.reset();
+        if (byteStream != null)
+            byteStream.reset();
     }
 
     public String getCharsetName() {

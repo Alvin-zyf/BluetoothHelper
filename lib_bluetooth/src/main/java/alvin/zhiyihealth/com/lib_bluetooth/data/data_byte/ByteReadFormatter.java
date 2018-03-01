@@ -1,7 +1,6 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data.data_byte;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Closeable;
 import java.io.IOException;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.ReadFormatterAdapter;
@@ -13,7 +12,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
  * <p>
  */
 
-public class ByteReadFormatter extends ReadFormatterAdapter<byte[]> implements Closeable {
+public class ByteReadFormatter extends ReadFormatterAdapter<byte[]> {
 
     private ByteArrayOutputStream stream;
 
@@ -22,9 +21,7 @@ public class ByteReadFormatter extends ReadFormatterAdapter<byte[]> implements C
 
         if (len == -1) {
 
-            if (listener != null) {
-                listener.produceData(stream.toByteArray());
-            }
+            sendDataToListener(stream.toByteArray());
 
             stream.reset();
 

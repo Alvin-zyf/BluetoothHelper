@@ -1,11 +1,11 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data.string;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.WriteFormatterAdapter;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
-import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 /**
  * Created by zouyifeng on 30/01/2018.
@@ -28,19 +28,8 @@ public class StringWriteFormater extends WriteFormatterAdapter<String> {
     }
 
     @Override
-    public InputStream writeFormat(String t) {
-        InputStream input = null;
-
-        try {
-
-            input = new ByteArrayInputStream(charsetName == null ? t.getBytes(charsetName) : t.getBytes());
-
-        } catch (Exception e) {
-            LogUtil.logE(e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-
-        return input;
+    public InputStream writeFormat(String t) throws IOException {
+        return new ByteArrayInputStream(charsetName == null ? t.getBytes(charsetName) : t.getBytes());
     }
 
     public String getCharsetName() {
@@ -51,4 +40,8 @@ public class StringWriteFormater extends WriteFormatterAdapter<String> {
         this.charsetName = charsetName;
     }
 
+    @Override
+    public long sizeOf(String s) {
+        return s.getBytes().length;
+    }
 }

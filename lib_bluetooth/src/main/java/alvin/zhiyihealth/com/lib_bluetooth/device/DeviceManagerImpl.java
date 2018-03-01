@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth.helper;
+package alvin.zhiyihealth.com.lib_bluetooth.device;
 
 import android.bluetooth.BluetoothDevice;
 
@@ -13,7 +13,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
  * 10:58
  */
 
-public class DeviceManagerImpl implements DeviceManager{
+public class DeviceManagerImpl implements DeviceManager {
 
     /**
      * 蓝牙设备
@@ -29,7 +29,10 @@ public class DeviceManagerImpl implements DeviceManager{
 
     private WriteFormatter mWriteFormatter;
 
-    private DeviceManagerImpl(){}
+    private DeviceConnector mDeviceConnector;
+
+    private DeviceManagerImpl() {
+    }
 
     @Override
     public BluetoothDevice getDevice() {
@@ -42,6 +45,11 @@ public class DeviceManagerImpl implements DeviceManager{
     }
 
     @Override
+    public DeviceConnector getDeviceConnector() {
+        return mDeviceConnector;
+    }
+
+    @Override
     public ReadFormatter getReadFormatter() {
         return mReadFormatter;
     }
@@ -49,6 +57,22 @@ public class DeviceManagerImpl implements DeviceManager{
     @Override
     public WriteFormatter getWriteFormatter() {
         return mWriteFormatter;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        DeviceManagerImpl that = (DeviceManagerImpl) o;
+
+        if (mConnectType != that.mConnectType) return false;
+        if (mDevice != null ? !mDevice.equals(that.mDevice) : that.mDevice != null) return false;
+        if (mReadFormatter != null ? !mReadFormatter.equals(that.mReadFormatter) : that.mReadFormatter != null)
+            return false;
+        if (mWriteFormatter != null ? !mWriteFormatter.equals(that.mWriteFormatter) : that.mWriteFormatter != null)
+            return false;
+        return mDeviceConnector != null ? mDeviceConnector.equals(that.mDeviceConnector) : that.mDeviceConnector == null;
     }
 
     /**
@@ -87,6 +111,12 @@ public class DeviceManagerImpl implements DeviceManager{
             return this;
         }
 
+        public Builder setDeviceConnector(DeviceConnector deviceConnector) {
+            P.mDeviceConnector = deviceConnector;
+
+            return this;
+        }
+
         public DeviceManager create() {
             DeviceManagerImpl deviceManager = new DeviceManagerImpl();
 
@@ -97,6 +127,7 @@ public class DeviceManagerImpl implements DeviceManager{
 
         /**
          * 初始化蓝牙设备管理者
+         *
          * @param deviceManager
          */
         private void initManager(DeviceManagerImpl deviceManager) {
@@ -104,6 +135,12 @@ public class DeviceManagerImpl implements DeviceManager{
 
             if (!ConnectTypeUtil.isConnectType(P.mConnectType)) {
                 throw new RuntimeException("the ConnectType is wrong,Please use alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType");
+            }
+
+            if (P.mDeviceConnector == null) {
+                deviceManager.mDeviceConnector = DeviceConnectorImpl.form(deviceManager);
+            } else {
+                deviceManager.mDeviceConnector = P.mDeviceConnector;
             }
 
             if (P.mReadFormatter == null) {
@@ -131,6 +168,8 @@ public class DeviceManagerImpl implements DeviceManager{
          * 连接类型 {@link alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType}
          */
         private int mConnectType = -1;
+
+        private DeviceConnector mDeviceConnector;
 
         private ReadFormatter mReadFormatter;
 

@@ -1,6 +1,5 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data.file;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,7 +14,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
  * <p>
  */
 
-public class FileReadFormatter extends ReadFormatterAdapter<File> implements Closeable {
+public class FileReadFormatter extends ReadFormatterAdapter<File>{
 
 
     public FileReadFormatter(FileNameFactory fileNameFactory, String dirPath) {
@@ -79,10 +78,9 @@ public class FileReadFormatter extends ReadFormatterAdapter<File> implements Clo
         try {
             outputStream.flush();
 
-            if (listener != null) {
-                listener.produceData(currentFile);
-                currentFile = null;
-            }
+            sendDataToListener(currentFile);
+            currentFile = null;
+
 
         } catch (IOException e) {
             e.printStackTrace();

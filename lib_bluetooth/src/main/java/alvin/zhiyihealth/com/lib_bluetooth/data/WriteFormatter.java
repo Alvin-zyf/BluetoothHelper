@@ -1,5 +1,6 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -14,5 +15,12 @@ public interface WriteFormatter<D> {
      * @param t 数据源
      * @return 带有数据的输入流
      */
-    InputStream writeFormat(D t);
+    InputStream writeFormat(D t) throws IOException;
+
+    /**
+     * 获取数据源的大小
+     * @param t
+     * @return 长度为字节
+     */
+    long sizeOf(D t);
 }

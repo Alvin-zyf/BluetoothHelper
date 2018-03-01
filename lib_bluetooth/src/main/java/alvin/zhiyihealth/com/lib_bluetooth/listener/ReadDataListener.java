@@ -7,7 +7,7 @@ package alvin.zhiyihealth.com.lib_bluetooth.listener;
  * 读取数据回调监听
  */
 
-public interface ReadDataListener<D> {
+public interface ReadDataListener<D> extends DataListener {
 
     /**
      * 此方法被调用时，代表有数据传入

@@ -1,4 +1,4 @@
-package alvin.zhiyihealth.com.lib_bluetooth.helper;
+package alvin.zhiyihealth.com.lib_bluetooth.device;
 
 import android.bluetooth.BluetoothDevice;
 
@@ -26,6 +26,12 @@ public interface DeviceManager {
      * @return 蓝牙状态有: {@link ConnectType}
      */
     int getConnectType();
+
+    /**
+     * 获取连接者
+     * @return DeviceConnector 对象
+     */
+    DeviceConnector getDeviceConnector();
 
     /**
      *
