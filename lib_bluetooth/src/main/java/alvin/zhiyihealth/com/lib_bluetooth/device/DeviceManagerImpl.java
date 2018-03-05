@@ -6,6 +6,9 @@ import alvin.zhiyihealth.com.lib_bluetooth.data.ReadFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.WriteFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.data_byte.ByteReadFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.data_byte.ByteWriteFormatter;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListen;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
 
 /**
@@ -57,6 +60,22 @@ public class DeviceManagerImpl implements DeviceManager {
     @Override
     public WriteFormatter getWriteFormatter() {
         return mWriteFormatter;
+    }
+
+    public DeviceManagerImpl setReadDataListener(ReadDataListener dataListener) {
+        if (mReadFormatter != null && mReadFormatter instanceof InstallDataListen) {
+            ((InstallDataListen) mReadFormatter).setDataListener(dataListener);
+        }
+
+        return this;
+    }
+
+    public DeviceManagerImpl setWriteDataListener(WriteDataListener dataListener) {
+        if (mWriteFormatter != null && mWriteFormatter instanceof InstallDataListen) {
+            ((InstallDataListen) mWriteFormatter).setDataListener(dataListener);
+        }
+
+        return this;
     }
 
     @Override
@@ -117,7 +136,7 @@ public class DeviceManagerImpl implements DeviceManager {
             return this;
         }
 
-        public DeviceManager create() {
+        public DeviceManagerImpl create() {
             DeviceManagerImpl deviceManager = new DeviceManagerImpl();
 
             initManager(deviceManager);

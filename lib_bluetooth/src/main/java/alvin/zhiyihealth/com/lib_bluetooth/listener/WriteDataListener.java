@@ -29,7 +29,7 @@ public interface WriteDataListener extends DataListener {
      * 是否调用进度方法
      * @return false 不可调用 ， 反之可调用
      */
-    boolean enablePropress();
+    boolean enableProgress();
 
     /**
      * 写出失败调用的方法

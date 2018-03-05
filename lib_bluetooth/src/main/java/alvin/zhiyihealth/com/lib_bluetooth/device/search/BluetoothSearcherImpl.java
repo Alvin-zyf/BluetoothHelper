@@ -28,6 +28,8 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
      */
     private SearchStrategy mStrategy;
 
+    private SearchStrategy.OnSearchListener sl;
+
     /**
      * 上下文 用于启动广播 与 服务
      */
@@ -91,6 +93,10 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
      */
     public BluetoothSearcherImpl serviceEnabled(boolean enabled) {
         mServiceEnabled = enabled;
+        return this;
+    }
+
+    public BluetoothSearcherImpl setOnSearchListener(SearchStrategy.OnSearchListener sl){
         return this;
     }
 

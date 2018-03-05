@@ -44,6 +44,15 @@ public class DeviceConnectorImpl implements DeviceConnector {
         return deviceConnector;
     }
 
+    public static DeviceConnector create(){
+        DeviceConnectorImpl deviceConnector = new DeviceConnectorImpl();
+
+        deviceConnector.mAdapter = BluetoothAdapter.getDefaultAdapter();
+        deviceConnector.mState = ConnectState.READY;
+
+        return deviceConnector;
+    }
+
     @Override
     public BluetoothSocket connect() throws IOException {
         mState = ConnectState.WATIE;

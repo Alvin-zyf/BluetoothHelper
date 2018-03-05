@@ -134,7 +134,7 @@ public class ConnectControllerImpl implements ConnectController {
             return this;
         }
 
-        public ConnectController build() {
+        public ConnectControllerImpl build() {
             ConnectControllerImpl connectController = new ConnectControllerImpl();
 
             apply(connectController);

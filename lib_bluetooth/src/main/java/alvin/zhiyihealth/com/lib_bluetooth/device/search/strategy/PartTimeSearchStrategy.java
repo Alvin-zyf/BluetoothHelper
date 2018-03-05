@@ -61,7 +61,7 @@ public class PartTimeSearchStrategy implements SearchStrategy {
 
     private OnSearchListener sl;
 
-    public void setSl(OnSearchListener sl) {
+    public void setOnSearchListener(OnSearchListener sl) {
         this.sl = sl;
     }
 

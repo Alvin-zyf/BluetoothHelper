@@ -2,13 +2,9 @@ package alvin.zhiyihealth.com.hospitallib;
 
 import android.Manifest;
 import android.bluetooth.BluetoothDevice;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -17,113 +13,171 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
-import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.helper.BluetoothHelper;
-import alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothHelperService;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.contorl.ConnectController;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.contorl.ConnectControllerImpl;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.link_strategy.InputStrategy;
+import alvin.zhiyihealth.com.lib_bluetooth.connect.link_strategy.OutputStrategy;
+import alvin.zhiyihealth.com.lib_bluetooth.data.dataWriter.WriteOutLinker;
+import alvin.zhiyihealth.com.lib_bluetooth.data.string.StringReadFormater;
+import alvin.zhiyihealth.com.lib_bluetooth.data.string.StringWriteFormater;
+import alvin.zhiyihealth.com.lib_bluetooth.device.DeviceManagerImpl;
+import alvin.zhiyihealth.com.lib_bluetooth.device.search.BluetoothSearcherImpl;
+import alvin.zhiyihealth.com.lib_bluetooth.device.search.strategy.PartTimeSearchStrategy;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BluetoothHelper bluetoothHelper;
-    private DeviceAdapter adapter;
-    private RecyclerView mBlueList;
-
-    ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            bluetoothHelper = ((BluetoothHelperService.BluetoothHelpBinder) service).getHelper();
-            bluetoothHelper.addOnHelperListener(new BluetoothHelper.OnHelperListener() {
-                @Override
-                public void onSearchValueChange(ArrayList<BluetoothDevice> deviceList) {
-                    if (adapter == null) {
-                        adapter = new DeviceAdapter(deviceList, bluetoothHelper);
-                        mBlueList.setAdapter(adapter);
-                    } else {
-                        adapter.setData(deviceList);
-                    }
-                }
-
-                @Override
-                public void isBluetoothOpen(boolean isOpen) {
-
-                }
-            });
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-
-        }
-    };
+    private ConnectControllerImpl controller;
+    private BluetoothSearcherImpl searcher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = new Intent(MainActivity.this, BluetoothHelperService.class);
-        startService(intent);
-        bindService(intent, connection, BIND_AUTO_CREATE);
+        //查找ID
+        RecyclerView mBlueList = findViewById(R.id.mBlueList);
+        Button mSearch = findViewById(R.id.search);
+        Button mStartServer = findViewById(R.id.startServer);
+        Button mSendMsg = findViewById(R.id.sendMsg);
 
-        mBlueList = findViewById(R.id.mBlueList);
+        /***************************蓝牙框架核心调用***********************************/
+
+        //创建蓝牙连接控制者
+        controller = new ConnectControllerImpl
+                .Builder()
+                .boundInputThread(new InputStrategy())
+                .boundOutputThread(new OutputStrategy())
+                .build();
+
+        //创建蓝牙搜索结果监听器
+        PartTimeSearchStrategy.OnSearchListener sl = new PartTimeSearchStrategy.OnSearchListener() {
+            @Override
+            public void onSearch(ArrayList<BluetoothDevice> t) {
+
+            }
+        };
+
+        //创建蓝牙搜索结果处理策略
+        PartTimeSearchStrategy searchStrategy = new PartTimeSearchStrategy();
+        searchStrategy.setOnSearchListener(sl);
+
+        //创建蓝牙设备搜索器
+        searcher = BluetoothSearcherImpl
+                .from(this)
+                .setSearchStrategy(searchStrategy);
+        //启用搜索器
+        searcher.launch();
+        searcher.startScan();
+
+        /***************************蓝牙框架核心调用***********************************/
+
+        //初始化控件
         mBlueList.setLayoutManager(new LinearLayoutManager(this));
+        mBlueList.setAdapter(new DeviceAdapter(controller));
 
-        findViewById(R.id.startServer).setOnClickListener(new View.OnClickListener() {
+        /********开始搜索*******/
+        mSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseDeviceHelper baseDeviceHelper = new BaseDeviceHelper(null, ConnectType.SERVER_INPUT_OUTPUT) {
+                /*
+                * startScan() 开始搜索
+                * stopScan() 停止搜索
+                * */
+                searcher.startScan();
+            }
+        });
+
+        /********以自身为蓝牙服务器启动*********/
+        mStartServer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*
+                * 创建设备管理者
+                * 将连接模式修改为 ConnectType.SERVER_INPUT_OUTPUT
+                * */
+                DeviceManagerImpl deviceManager = new DeviceManagerImpl
+                        .Builder()
+                        .setConnectType(ConnectType.SERVER_INPUT_OUTPUT)
+                        .setReadFormatter(new StringReadFormater("utf-8"))
+                        .setWriteFormatter(new StringWriteFormater("utf-8"))
+                        .create();
+
+                //设置数据读写监听
+                //设置读取数据监听
+                deviceManager.setReadDataListener(new ReadDataListener<String>() {
+
                     @Override
-                    public void processData(byte[] data, int len) {
-                        try {
-                            LogUtil.logI(new String(data, 0, len, "utf-8"));
-                        } catch (Exception e) {
+                    public void produceData(String s) {
 
-                        }
                     }
-                };
+                });
+                //设置写出数据监听
+                deviceManager.setWriteDataListener(new WriteDataListener() {
+                    @Override
+                    public void success(int id) {
 
-                bluetoothHelper.isFoundMind(MainActivity.this);
-                bluetoothHelper.startBluetoothServer(baseDeviceHelper);
+                    }
+
+                    @Override
+                    public void progress(int id, long total, long currentPro) {
+
+                    }
+
+                    @Override
+                    public boolean enableProgress() {
+                        return false;
+                    }
+
+                    @Override
+                    public void failed(int id) {
+
+                    }
+                });
+
+                //通过当前的 DeviceManager 建立连接
+                controller.connect(deviceManager);
             }
         });
 
-        findViewById(R.id.sendMsg).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bluetoothHelper.getDeviceHelper() != null) {
-                    try {
-                        bluetoothHelper.submitSmallData("你好啊".getBytes("utf-8"));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-
-        findViewById(R.id.find).setOnClickListener(new View.OnClickListener() {
+        /********写出数据*********/
+        mSendMsg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                checkPermission();
-                bluetoothHelper.openBluetooth(MainActivity.this);
-                boolean a = bluetoothHelper.startScan();
-
+                //获取数据写出者
+                WriteOutLinker linker = controller.getWriteLinker();
+                //写出数据  数据ID
+                linker.writeData("hello", 1);
             }
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        controller.release();
+    }
+
     static class DeviceAdapter extends RecyclerView.Adapter<DeviceHolder> implements View.OnClickListener {
         private ArrayList<BluetoothDevice> data;
-        BluetoothHelper bluetoothHelper;
+        private ConnectController controller;
 
-        public DeviceAdapter(ArrayList<BluetoothDevice> data, BluetoothHelper bluetoothHelper) {
+        public DeviceAdapter(ArrayList<BluetoothDevice> data, ConnectController controller) {
             this.data = data;
-            this.bluetoothHelper = bluetoothHelper;
+            this.controller = controller;
+        }
+
+        public DeviceAdapter(ConnectController controller) {
+            this.controller = controller;
         }
 
         public void setData(ArrayList<BluetoothDevice> data) {
@@ -149,23 +203,54 @@ public class MainActivity extends AppCompatActivity {
             return data.size();
         }
 
+        /***********已客户端的形式连接蓝牙服务器**************/
         @Override
         public void onClick(View v) {
             int position = (int) v.getTag();
             BluetoothDevice bluetoothDevice = data.get(position);
 
-            BaseDeviceHelper baseDeviceHelper = new BaseDeviceHelper(bluetoothDevice,  ConnectType.CLIENT_INPUT_OUTPUT) {
+            //已客户端的形式连接
+            DeviceManagerImpl deviceManager = new DeviceManagerImpl
+                    .Builder()
+                    .setConnectType(ConnectType.CLIENT_INPUT_OUTPUT)
+                    .buildDevice(bluetoothDevice)
+                    .setReadFormatter(new StringReadFormater("utf-8"))
+                    .setWriteFormatter(new StringWriteFormater("utf-8"))
+                    .create();
+
+            //设置数据读写监听
+            //设置读取数据监听
+            deviceManager.setReadDataListener(new ReadDataListener<String>() {
+
                 @Override
-                public void processData(byte[] data, int len) {
-                    try {
-                        LogUtil.logI(new String(data, 0, len, "utf-8"));
-                    } catch (Exception e) {
+                public void produceData(String s) {
 
-                    }
                 }
-            };
+            });
+            //设置写出数据监听
+            deviceManager.setWriteDataListener(new WriteDataListener() {
+                @Override
+                public void success(int id) {
 
-            bluetoothHelper.connectDevice(baseDeviceHelper);
+                }
+
+                @Override
+                public void progress(int id, long total, long currentPro) {
+
+                }
+
+                @Override
+                public boolean enableProgress() {
+                    return false;
+                }
+
+                @Override
+                public void failed(int id) {
+
+                }
+            });
+
+            controller.connect(deviceManager);
         }
     }
 
@@ -182,17 +267,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        bluetoothHelper.release();
-        unbindService(connection);
-    }
 
     final int REQUEST_PERMISSION_BT = 100;
 

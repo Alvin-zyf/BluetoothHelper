@@ -274,7 +274,7 @@ public class OutputStrategy implements ConnectStrategy, DataWriter {
                 int count = 0;
 
                 //判断是否需要告知监听当前写出进度
-                if (listener != null && listener.enablePropress())
+                if (listener != null && listener.enableProgress())
                     while ((len = in.read(bytes)) != -1) {
                         out.write(bytes, 0, len);
                         count++;
@@ -288,7 +288,7 @@ public class OutputStrategy implements ConnectStrategy, DataWriter {
                 //写出所有数据
                 out.flush();
 
-                if (listener != null && listener.enablePropress()) {
+                if (listener != null && listener.enableProgress()) {
                     listener.progress(id, dataSize, dataSize);
                 }
 
