@@ -1,7 +1,7 @@
 package alvin.zhiyihealth.com.lib_bluetooth.data.adapter;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.WriteFormatter;
-import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListen;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
 
 /**
@@ -9,7 +9,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
  * 19:27
  */
 
-public abstract class WriteFormatterAdapter<T> implements WriteFormatter<T>,InstallDataListen<WriteDataListener> {
+public abstract class WriteFormatterAdapter<T> implements WriteFormatter<T>,InstallDataListener<WriteDataListener> {
 
     /**
      * 读取数据监听

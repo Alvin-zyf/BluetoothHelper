@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.dataWriter.DataWriter;
 import alvin.zhiyihealth.com.lib_bluetooth.device.DeviceManager;
-import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListen;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
@@ -254,8 +254,8 @@ public class OutputStrategy implements ConnectStrategy, DataWriter {
 
             //获取写出数据监听
             WriteDataListener listener = null;
-            if (mDeviceManager.getWriteFormatter() instanceof InstallDataListen) {
-                listener = (WriteDataListener) ((InstallDataListen) mDeviceManager.getWriteFormatter()).getDataListener();
+            if (mDeviceManager.getWriteFormatter() instanceof InstallDataListener) {
+                listener = (WriteDataListener) ((InstallDataListener) mDeviceManager.getWriteFormatter()).getDataListener();
             }
 
             //获取数据大小
@@ -296,6 +296,8 @@ public class OutputStrategy implements ConnectStrategy, DataWriter {
                 if (listener != null) {
                     listener.success(id);
                 }
+
+                LogUtil.logD("write success");
 
                 //关闭流
                 in.close();

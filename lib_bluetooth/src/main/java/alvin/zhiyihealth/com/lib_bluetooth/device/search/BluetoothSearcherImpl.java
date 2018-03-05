@@ -1,5 +1,6 @@
 package alvin.zhiyihealth.com.lib_bluetooth.device.search;
 
+import android.app.Activity;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -11,10 +12,12 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
+import alvin.zhiyihealth.com.lib_bluetooth.BluetoothPermission;
 import alvin.zhiyihealth.com.lib_bluetooth.device.search.strategy.SearchStrategy;
 import alvin.zhiyihealth.com.lib_bluetooth.device.search.strategy.UsualSearchStrategy;
 import alvin.zhiyihealth.com.lib_bluetooth.receiver.BluetoothReceiver;
 import alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothSearchService;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 /**
  * Created by zouyifeng on 01/03/2018.
@@ -72,6 +75,9 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
         searcher.mBlueToothListener = new BluetoothStateListener();
         searcher.mStrategy = new UsualSearchStrategy();
         searcher.setSearchStrategy(searcher.mStrategy);
+
+        LogUtil.logD("create a searcher of bluetooth ");
+
         return searcher;
     }
 
@@ -96,13 +102,17 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
         return this;
     }
 
-    public BluetoothSearcherImpl setOnSearchListener(SearchStrategy.OnSearchListener sl){
+    public BluetoothSearcherImpl setOnSearchListener(SearchStrategy.OnSearchListener sl) {
         return this;
     }
 
     @Override
     public void launch() {
-        if (mBlueAdapter.isEnabled()) return;
+        LogUtil.logD("launch start");
+
+        if (mContext instanceof Activity) {
+            BluetoothPermission.applySearchPermission((Activity) mContext, 0x0000FFFF);
+        }
 
         boolean openState = mBlueAdapter.enable();
 
@@ -125,6 +135,8 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
      * 注册广播接收者 接收蓝牙设备广播
      */
     private void registerReceiver() {
+        LogUtil.logD("register receiver");
+
         if (mReceiver == null) {
             mReceiver = new BluetoothReceiver(mBlueToothListener);
             IntentFilter filter = new IntentFilter();
@@ -142,6 +154,8 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
      * 启动服务，在服务中启动广播接受者
      */
     private void startService() {
+        LogUtil.logD("start service");
+
         //需要以绑定服务的形式启动服务，获取IBinder
         if (conn == null || !conn.isConnect()) {
             Intent intent = new Intent(mContext, BluetoothSearchService.class);
@@ -178,6 +192,7 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
 
     @Override
     public void startScan() {
+        LogUtil.logD("start scan");
         mBlueAdapter.startDiscovery();
     }
 
@@ -185,6 +200,7 @@ public class BluetoothSearcherImpl implements BluetoothSearcher {
     public void stopScan() {
         mBlueAdapter.cancelDiscovery();
     }
+
 
     private static class BluetoothServiceConnection implements ServiceConnection {
         private BluetoothSearchService.IBinderImpl binder;

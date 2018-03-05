@@ -29,6 +29,7 @@ public abstract class PeriodConnectThread extends BaseConnectThread implements C
             onConnected(mSocket);
 
         } catch (Exception e) {
+            e.printStackTrace();
             LogUtil.logE(e.getLocalizedMessage());
 
             onError(e);

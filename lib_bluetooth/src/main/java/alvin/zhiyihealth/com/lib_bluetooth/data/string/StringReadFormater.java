@@ -2,6 +2,7 @@ package alvin.zhiyihealth.com.lib_bluetooth.data.string;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.adapter.ReadFormatterAdapter;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
@@ -14,7 +15,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
  * 字符串数据转化器
  */
 
-public class StringReadFormater extends ReadFormatterAdapter<String>  {
+public class StringReadFormater extends ReadFormatterAdapter<String> {
 
     /**
      * 编码格式
@@ -43,29 +44,41 @@ public class StringReadFormater extends ReadFormatterAdapter<String>  {
      */
     @Override
     public void readFormat(byte[] data, int len) {
-        if (byteStream == null)
-            byteStream = new ByteArrayOutputStream();
+//        if (byteStream == null)
+//            byteStream = new ByteArrayOutputStream();
+
+//        if (len == -1) {
+//
+//            try {
+//                sendDataToListener(byteStream.toString(charsetName));
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                LogUtil.logE(e.getLocalizedMessage());
+//            }
+//
+//            clean();
+//
+//        } else {
+//            byteStream.write(data, 0, len);
+//        }
 
         if (len == -1) {
-
-            try {
-                sendDataToListener(byteStream.toString(charsetName));
-            } catch (Exception e) {
-                e.printStackTrace();
-                LogUtil.logE(e.getLocalizedMessage());
-            }
-
             clean();
+            return;
+        }
 
-        } else {
-            byteStream.write(data, 0, len);
+        try {
+            sendDataToListener(new String(data, 0, len, charsetName));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            LogUtil.logE(e.getLocalizedMessage());
         }
     }
 
     @Override
     public void clean() {
-        if (byteStream != null)
-            byteStream.reset();
+//        if (byteStream != null)
+//            byteStream.reset();
     }
 
     public String getCharsetName() {

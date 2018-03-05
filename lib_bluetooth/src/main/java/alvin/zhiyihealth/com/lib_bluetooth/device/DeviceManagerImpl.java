@@ -6,7 +6,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.data.ReadFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.WriteFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.data_byte.ByteReadFormatter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.data_byte.ByteWriteFormatter;
-import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListen;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.WriteDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
@@ -63,16 +63,16 @@ public class DeviceManagerImpl implements DeviceManager {
     }
 
     public DeviceManagerImpl setReadDataListener(ReadDataListener dataListener) {
-        if (mReadFormatter != null && mReadFormatter instanceof InstallDataListen) {
-            ((InstallDataListen) mReadFormatter).setDataListener(dataListener);
+        if (mReadFormatter != null && mReadFormatter instanceof InstallDataListener) {
+            ((InstallDataListener) mReadFormatter).setDataListener(dataListener);
         }
 
         return this;
     }
 
     public DeviceManagerImpl setWriteDataListener(WriteDataListener dataListener) {
-        if (mWriteFormatter != null && mWriteFormatter instanceof InstallDataListen) {
-            ((InstallDataListen) mWriteFormatter).setDataListener(dataListener);
+        if (mWriteFormatter != null && mWriteFormatter instanceof InstallDataListener) {
+            ((InstallDataListener) mWriteFormatter).setDataListener(dataListener);
         }
 
         return this;
@@ -155,6 +155,7 @@ public class DeviceManagerImpl implements DeviceManager {
             if (!ConnectTypeUtil.isConnectType(P.mConnectType)) {
                 throw new RuntimeException("the ConnectType is wrong,Please use alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType");
             }
+            deviceManager.mConnectType = P.mConnectType;
 
             if (P.mDeviceConnector == null) {
                 deviceManager.mDeviceConnector = DeviceConnectorImpl.form(deviceManager);

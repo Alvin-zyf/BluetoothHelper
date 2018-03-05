@@ -51,7 +51,7 @@ public interface DeviceConnector extends Closeable {
         /**
          * 等待连接
          */
-        WATIE,
+        WAITE,
 
         /**
          * 已连接

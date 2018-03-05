@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import alvin.zhiyihealth.com.lib_bluetooth.data.ReadFormatter;
-import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListen;
+import alvin.zhiyihealth.com.lib_bluetooth.listener.InstallDataListener;
 import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
 
 /**
@@ -13,7 +13,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.listener.ReadDataListener;
  * 19:27
  */
 
-public abstract class ReadFormatterAdapter<T> implements ReadFormatter, InstallDataListen<ReadDataListener<T>> {
+public abstract class ReadFormatterAdapter<T> implements ReadFormatter, InstallDataListener<ReadDataListener<T>> {
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
 

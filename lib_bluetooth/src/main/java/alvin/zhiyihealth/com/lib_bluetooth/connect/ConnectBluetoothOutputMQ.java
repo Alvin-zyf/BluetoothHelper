@@ -21,7 +21,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
  * <p>
  * 向蓝牙设备写入的线程
  */
-
+@Deprecated
 public class ConnectBluetoothOutputMQ extends ConnectBluetooth {
 
     private BluetoothSubmitHandler handler;

@@ -20,7 +20,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.helper.BaseDeviceHelper;
  * <p>
  * 专门建立蓝牙连接的线程,用于读取数据
  */
-
+@Deprecated
 public class ConnectBluetoothInput extends ConnectBluetooth {
     private Handler handler = new Handler(Looper.getMainLooper()) {
         @Override

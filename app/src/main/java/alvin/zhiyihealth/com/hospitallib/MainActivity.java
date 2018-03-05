@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import alvin.zhiyihealth.com.lib_bluetooth.BluetoothPermission;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.ConnectType;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.contorl.ConnectController;
 import alvin.zhiyihealth.com.lib_bluetooth.connect.contorl.ConnectControllerImpl;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ConnectControllerImpl controller;
     private BluetoothSearcherImpl searcher;
+    private DeviceAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +64,8 @@ public class MainActivity extends AppCompatActivity {
         PartTimeSearchStrategy.OnSearchListener sl = new PartTimeSearchStrategy.OnSearchListener() {
             @Override
             public void onSearch(ArrayList<BluetoothDevice> t) {
-
+                adapter.getData().addAll(t);
+                adapter.notifyDataSetChanged();
             }
         };
 
@@ -74,15 +77,21 @@ public class MainActivity extends AppCompatActivity {
         searcher = BluetoothSearcherImpl
                 .from(this)
                 .setSearchStrategy(searchStrategy);
+
+
         //启用搜索器
+        BluetoothPermission.applySearchPermission(this, REQUEST_PERMISSION_BT);
+
         searcher.launch();
-        searcher.startScan();
+
+        LogUtil.logD("prepare finished");
 
         /***************************蓝牙框架核心调用***********************************/
 
         //初始化控件
         mBlueList.setLayoutManager(new LinearLayoutManager(this));
-        mBlueList.setAdapter(new DeviceAdapter(controller));
+        adapter = new DeviceAdapter(controller);
+        mBlueList.setAdapter(adapter);
 
         /********开始搜索*******/
         mSearch.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +109,8 @@ public class MainActivity extends AppCompatActivity {
         mStartServer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BluetoothPermission.applyOtherDeviceCanFindMine(MainActivity.this);
+
                 /*
                 * 创建设备管理者
                 * 将连接模式修改为 ConnectType.SERVER_INPUT_OUTPUT
@@ -117,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void produceData(String s) {
-
+                        LogUtil.logD(s);
                     }
                 });
                 //设置写出数据监听
@@ -168,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     static class DeviceAdapter extends RecyclerView.Adapter<DeviceHolder> implements View.OnClickListener {
-        private ArrayList<BluetoothDevice> data;
+        private ArrayList<BluetoothDevice> data = new ArrayList<>();
         private ConnectController controller;
 
         public DeviceAdapter(ArrayList<BluetoothDevice> data, ConnectController controller) {
@@ -200,7 +211,13 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
+            if (data == null) return 0;
+
             return data.size();
+        }
+
+        public ArrayList<BluetoothDevice> getData() {
+            return data;
         }
 
         /***********已客户端的形式连接蓝牙服务器**************/
@@ -224,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void produceData(String s) {
-
+                    LogUtil.logD(s);
                 }
             });
             //设置写出数据监听
@@ -274,7 +291,7 @@ public class MainActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED) {
             int sdkInt = Build.VERSION.SDK_INT;
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                //TODO 提示权限已经被禁用 且不在提示
+                // 提示权限已经被禁用 且不在提示
                 return;
             }
 
@@ -288,10 +305,10 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQUEST_PERMISSION_BT:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //TODO 请求权限成功
+                    // 请求权限成功
                     LogUtil.logI("request permission success");
                 } else {
-                    //TODO 提示权限已经被禁用
+                    // 提示权限已经被禁用
 
                     LogUtil.logI("request permission failed");
 

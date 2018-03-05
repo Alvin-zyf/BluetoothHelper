@@ -20,7 +20,7 @@ public interface ConnectController {
     void disConnect();
 
     /**
-     * 释放线程池，调用该方法后不可继续使用该对象
+     * 清除缓存
      */
     void release();
 }

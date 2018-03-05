@@ -27,7 +27,7 @@ public class DeviceConnectorImpl implements DeviceConnector {
 
     private String serverName = "";
 
-    private BluetoothAdapter mAdapter;
+    public BluetoothAdapter mAdapter;
 
     private ConnectState mState;
 
@@ -44,7 +44,7 @@ public class DeviceConnectorImpl implements DeviceConnector {
         return deviceConnector;
     }
 
-    public static DeviceConnector create(){
+    public static DeviceConnector create() {
         DeviceConnectorImpl deviceConnector = new DeviceConnectorImpl();
 
         deviceConnector.mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -55,7 +55,9 @@ public class DeviceConnectorImpl implements DeviceConnector {
 
     @Override
     public BluetoothSocket connect() throws IOException {
-        mState = ConnectState.WATIE;
+        LogUtil.logD(this.getClass().getName() + " : connect");
+
+        mState = ConnectState.WAITE;
 
         if (mSocket != null && mSocket.isConnected())
             return mSocket;
@@ -108,19 +110,32 @@ public class DeviceConnectorImpl implements DeviceConnector {
      * @throws IOException 连接失败会抛出异常
      */
     public BluetoothSocket actClientConnectDevice(DeviceManager device) throws IOException {
+        LogUtil.logD(this.getClass().getName() + " : actClientConnectDevice");
         synchronized (this) {
             if (mSocket == null) {
 
                 try {
+                    LogUtil.logD("connect " + device.getDevice().getAddress());
                     mSocket = device.getDevice().createRfcommSocketToServiceRecord(uuid);
+//                    mSocket = (BluetoothSocket) device.getDevice().getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device.getDevice(),1);
                     mSocket.connect();
                     mState = ConnectState.CONNECTED;
                 } catch (IOException e) {
+                    e.printStackTrace();
                     close();
                     throw e;
                 }
+//                catch (IllegalAccessException e) {
+//                    e.printStackTrace();
+//                } catch (InvocationTargetException e) {
+//                    e.printStackTrace();
+//                } catch (NoSuchMethodException e) {
+//                    e.printStackTrace();
+//                }
 
             }
+
+            LogUtil.logD(this.getClass().getName() + " : link success");
             return mSocket;
         }
     }
@@ -133,21 +148,26 @@ public class DeviceConnectorImpl implements DeviceConnector {
      * @throws IOException 连接失败会抛出异常
      */
     public BluetoothSocket actServerConnectDevice() throws IOException {
+        LogUtil.logD(this.getClass().getName() + " : actServerConnectDevice");
         synchronized (this) {
-            LogUtil.logI("server address is " + mAdapter.getAddress());
+            LogUtil.logD("server address is " + mAdapter.getAddress());
             if (mServerSocket == null || mSocket == null) {
                 try {
 
                     mServerSocket = mAdapter.listenUsingRfcommWithServiceRecord(serverName, uuid);
-                    LogUtil.logI("wait for the client bluetooth");
+                    LogUtil.logD("wait for the client bluetooth");
                     mSocket = mServerSocket.accept();
+
                     mState = ConnectState.CONNECTED;
 
                 } catch (IOException e) {
+                    e.printStackTrace();
                     close();
                     throw e;
                 }
             }
+
+            LogUtil.logD(this.getClass().getName() + " : link success");
             return mSocket;
         }
     }
@@ -164,6 +184,7 @@ public class DeviceConnectorImpl implements DeviceConnector {
         }
 
         mState = ConnectState.UNCONNECTED;
+        LogUtil.logD(this.getClass().getName() + " : close socket");
     }
 
 

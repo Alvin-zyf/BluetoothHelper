@@ -37,6 +37,8 @@ public class InputStrategy implements ConnectStrategy {
     @Override
     public void connect(Executor executor, DeviceManager deviceManager) {
         synchronized (this) {
+            LogUtil.logD("connect start");
+
             if (currentThread != null) {
                 disConnect();
             }
@@ -61,7 +63,7 @@ public class InputStrategy implements ConnectStrategy {
             inputData(bufferIn);
         }
 
-        private void inputData(InputStream in) throws IOException {
+        private void inputData(BufferedInputStream in) throws IOException {
 
             ReadFormatter mReadFormatter = getDeviceManager().getReadFormatter();
             byte[] data = new byte[1024];

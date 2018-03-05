@@ -1,9 +1,10 @@
 package alvin.zhiyihealth.com.lib_bluetooth.device.search.strategy;
 
 import android.bluetooth.BluetoothDevice;
-import android.os.SystemClock;
 
 import java.util.ArrayList;
+
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 /**
  * Created by zouyifeng on 05/03/2018.
@@ -24,19 +25,23 @@ public class PartTimeSearchStrategy implements SearchStrategy {
     /**
      * 单次搜索时间
      */
-    private long partTime = 3000;
+    private long partTime = 1000;
 
     private long time;
 
     @Override
     public void strategy(BluetoothDevice device) {
         if (devices.size() == 0) {
-            time = SystemClock.currentThreadTimeMillis();
+            time = System.currentTimeMillis();
         }
 
         devices.add(device);
 
-        boolean isTimeOut = SystemClock.currentThreadTimeMillis() - time > partTime;
+        boolean isTimeOut = System.currentTimeMillis() - time > partTime;
+
+        LogUtil.logD("curTime: " + System.currentTimeMillis() + ", time: " + time
+        + ", result: " + ( System.currentTimeMillis() - time)
+        );
 
         if (isTimeOut) {
             ArrayList<BluetoothDevice> clone = (ArrayList<BluetoothDevice>) devices.clone();

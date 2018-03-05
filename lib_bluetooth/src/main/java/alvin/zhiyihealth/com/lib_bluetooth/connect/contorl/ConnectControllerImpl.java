@@ -8,6 +8,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.data.dataWriter.DataWriter;
 import alvin.zhiyihealth.com.lib_bluetooth.data.dataWriter.WriteOutLinker;
 import alvin.zhiyihealth.com.lib_bluetooth.device.DeviceManager;
 import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
+import alvin.zhiyihealth.com.lib_bluetooth.utils.LogUtil;
 
 /**
  * Created by zouyifeng on 09/02/2018.
@@ -61,9 +62,13 @@ public class ConnectControllerImpl implements ConnectController {
         //根据Type创建进行线程进行读写 1.可读可写 2.只可读 3.只可写
         if (ConnectTypeUtil.isInputType(connectType)) {
             mInputStrategy.connect(mThreadPool, device);
+
+            LogUtil.logD("launch strategy of input");
         }
         if (ConnectTypeUtil.isOutputType(connectType)) {
             mOutputStrategy.connect(mThreadPool, device);
+
+            LogUtil.logD("launch strategy of output");
         }
     }
 
@@ -73,11 +78,13 @@ public class ConnectControllerImpl implements ConnectController {
      * @return true 一致，否则false
      */
     private boolean isSame(DeviceManager device) {
+        if (mCurrentDM == null) return false;
+
         if (mCurrentDM.equals(device)) {
 
             switch (device.getDeviceConnector().getState()) {
                 case CONNECTED:
-                case WATIE:
+                case WAITE:
                     return true;
 
                 case UNCONNECTED:
@@ -91,6 +98,9 @@ public class ConnectControllerImpl implements ConnectController {
         return false;
     }
 
+    /**
+     * 获取数据写出连接者
+     */
     public WriteOutLinker getWriteLinker() {
         if (mOutputStrategy instanceof DataWriter) {
             return WriteOutLinker.link((DataWriter) mOutputStrategy);
@@ -105,6 +115,9 @@ public class ConnectControllerImpl implements ConnectController {
         mOutputStrategy.disConnect();
     }
 
+    /**
+     * 释放线程池，调用该方法后不可继续使用该对象
+     */
     @Override
     public void release() {
         disConnect();
@@ -141,6 +154,7 @@ public class ConnectControllerImpl implements ConnectController {
 
             connectController.init();
 
+            LogUtil.logD("create a controller of connect");
             return connectController;
         }
 

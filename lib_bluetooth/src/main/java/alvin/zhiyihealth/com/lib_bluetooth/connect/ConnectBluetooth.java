@@ -11,7 +11,7 @@ import alvin.zhiyihealth.com.lib_bluetooth.utils.ConnectTypeUtil;
  *
  * 蓝牙链接抽象类,用于执行链接需要的准备工作，最终获取socket
  */
-
+@Deprecated
 public abstract class ConnectBluetooth implements Runnable {
 
     BaseDeviceHelper mDevice;

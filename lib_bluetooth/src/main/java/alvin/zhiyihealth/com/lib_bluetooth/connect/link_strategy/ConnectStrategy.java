@@ -16,6 +16,11 @@ public interface ConnectStrategy {
      */
     void disConnect();
 
+    /**
+     * 连接蓝牙设备
+     * @param executor 线程池
+     * @param deviceManager 设备管理者
+     */
     void connect(Executor executor, DeviceManager deviceManager);
 
     interface ConnectThread extends Runnable {
