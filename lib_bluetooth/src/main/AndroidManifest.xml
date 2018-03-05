@@ -14,7 +14,13 @@
         <service
             android:name="alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothHelperService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+        <service android:name=".service.BluetoothSearchService" />
+        <service
+            android:name="alvin.zhiyihealth.com.lib_bluetooth.service.BluetoothSearchService"
+            android:enabled="true"
+            android:exported="true" />
+        <service android:name=".service.BluetoothSearchService" />
     </application>
 
 </manifest>

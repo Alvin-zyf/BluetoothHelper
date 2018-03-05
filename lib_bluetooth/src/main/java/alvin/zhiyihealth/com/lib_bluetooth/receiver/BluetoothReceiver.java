@@ -85,6 +85,8 @@ public class BluetoothReceiver extends BroadcastReceiver {
         this.onBlueToothStateListener = onBlueToothStateListener;
     }
 
+    public BluetoothReceiver(){}
+
     /**
      * 监听蓝牙发出的任何事件
      */
@@ -94,6 +96,9 @@ public class BluetoothReceiver extends BroadcastReceiver {
         this.onBlueToothStateListener = onBlueToothStateListener;
     }
 
+    /**
+     * 蓝牙状态监听者
+     */
     public interface OnBlueToothStateListener {
         void findDevice(BluetoothDevice scanDevice);
 

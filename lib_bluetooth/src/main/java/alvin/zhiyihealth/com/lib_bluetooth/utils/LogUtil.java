@@ -8,11 +8,12 @@ import android.util.Log;
  */
 
 public final class LogUtil {
-    private LogUtil(){}
+    private LogUtil() {
+    }
 
     private static final String TAG = "lib_bluetooth";
 
-    public static int LOG_ROOT;
+    public static int LOG_ROOT = LogUtil.LOG_D | LogUtil.LOG_E | LogUtil.LOG_I;
     public static final int LOG_D = 0x0000000F;
     public static final int LOG_I = 0x000000F0;
     public static final int LOG_E = 0x00000F00;
